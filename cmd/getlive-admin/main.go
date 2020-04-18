@@ -11,12 +11,15 @@ import (
 	"fmt"
 	"log"
 	"os"
+
 	"time"
 
 	"github.com/ardanlabs/conf"
+	"github.com/arjanvaneersel/getlive/internal/entry"
 	"github.com/arjanvaneersel/getlive/internal/platform/auth"
 	"github.com/arjanvaneersel/getlive/internal/platform/database"
 	"github.com/arjanvaneersel/getlive/internal/schema"
+	"github.com/arjanvaneersel/getlive/internal/scraper"
 	"github.com/arjanvaneersel/getlive/internal/user"
 	"github.com/pkg/errors"
 )
@@ -75,6 +78,8 @@ func run() error {
 		err = useradd(dbConfig, cfg.Args.Num(1), cfg.Args.Num(2))
 	case "keygen":
 		err = keygen(cfg.Args.Num(1))
+	case "scrape":
+		err = scrape(dbConfig)
 	default:
 		err = errors.New("Must specify a command")
 	}
@@ -187,6 +192,54 @@ func keygen(path string) error {
 	if err := file.Close(); err != nil {
 		return errors.Wrap(err, "closing private file")
 	}
+
+	return nil
+}
+
+func scrape(cfg database.Config) error {
+	db, err := database.Open(cfg)
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	fmt.Sprintf("Running scraper")
+
+	s := scraper.New(
+		"https://www.billboard.com/articles/columns/pop/9335531/coronavirus-quarantine-music-events-online-streams",
+		"https://www.vulture.com/amp/2020/04/all-musicians-streaming-live-concerts.html",
+		"https://www.npr.org/2020/03/17/816504058/a-list-of-live-virtual-concerts-to-watch-during-the-coronavirus-shutdown",
+	)
+
+	pageChan := make(chan *scraper.Page)
+	go s.Run(pageChan)
+
+	for {
+		page := <-pageChan
+		if page == nil {
+			break
+		}
+
+		for _, p := range page.Subpages {
+			e := entry.NewEntry{
+				Time:        time.Now(),
+				Title:       p.Title,
+				Description: p.Description,
+				URL:         p.URL,
+			}
+
+			if _, err := entry.Create(context.Background(), db, e, time.Now()); err != nil {
+				log.Fatal(err)
+			}
+		}
+	}
+	// for _, page := range s.Pages {
+	// 	fmt.Printf("%s - %s\n", page.Title, page.URL)
+	// 	for j, p := range page.Subpages {
+	// 		fmt.Printf("\t[%d] %s - %s\n", j, p.Title, p.URL)
+	// 	}
+
+	// }
 
 	return nil
 }

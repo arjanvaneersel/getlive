@@ -39,7 +39,7 @@ func TestEntry(t *testing.T) {
 				now, time.Hour,
 			)
 
-			r, err := entry.Create(ctx, db, claims, n, now)
+			r, err := entry.Create(ctx, db, n, now)
 			if err != nil {
 				t.Fatalf("\t%s\tShould be able to create an entry : %s.", tests.Failed, err)
 			}

@@ -50,6 +50,11 @@ services:
     environment:
       - API_DB_HOST=db
       - API_DB_DISABLE_TLS=1 # This is only disabled for our development enviroment.
+      - API_TWITTER_CONSUMER_KEY=${API_TWITTER_CONSUMER_KEY}
+      - API_TWITTER_CONSUMER_SECRET=${API_TWITTER_CONSUMER_SECRET}
+      - API_TWITTER_ACCESS_TOKEN=${API_TWITTER_ACCESS_TOKEN}
+      - API_TWITTER_ACCESS_SECRET=${API_TWITTER_ACCES_SECRET}
+      - API_TWITTER_TOPICS=#funny
       # - GODEBUG=gctrace=1
     depends_on:
       - metrics

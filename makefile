@@ -10,6 +10,9 @@ keys:
 admin:
 	go run ./cmd/getlive-admin/main.go --db-disable-tls=1 useradd admin@example.com gophers
 
+scrape:
+	go run ./cmd/getlive-admin/main.go --db-disable-tls=1 scrape
+
 migrate:
 	go run ./cmd/getlive-admin/main.go --db-disable-tls=1 migrate
 

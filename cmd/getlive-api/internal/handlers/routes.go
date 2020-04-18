@@ -44,9 +44,16 @@ func API(build string, shutdown chan os.Signal, log *log.Logger, db *sqlx.DB, au
 	}
 	app.Handle("GET", "/v1/entries", e.List)
 	app.Handle("POST", "/v1/entries", e.Create, mid.Authenticate(authenticator))
-	app.Handle("GET", "/v1/entries/:id", e.Retrieve, mid.Authenticate(authenticator))
+	app.Handle("GET", "/v1/entries/:id", e.Retrieve)
 	app.Handle("PUT", "/v1/entries/:id", e.Update, mid.Authenticate(authenticator))
 	app.Handle("DELETE", "/v1/entries/:id", e.Delete, mid.Authenticate(authenticator))
+
+	w := WebAdmin{
+		db: db,
+	}
+
+	app.Handle("GET", "/", w.List)
+	app.Handle("GET", "/entries/:id", w.Retrieve)
 
 	return app
 }

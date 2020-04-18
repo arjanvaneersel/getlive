@@ -11,12 +11,15 @@ import (
 	_ "net/http/pprof" // Register the pprof handlers
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
 	"contrib.go.opencensus.io/exporter/zipkin"
 	"github.com/ardanlabs/conf"
 	"github.com/arjanvaneersel/getlive/cmd/getlive-api/internal/handlers"
+	"github.com/arjanvaneersel/getlive/internal/aggregator"
+	"github.com/arjanvaneersel/getlive/internal/aggregator/twitter"
 	"github.com/arjanvaneersel/getlive/internal/platform/auth"
 	"github.com/arjanvaneersel/getlive/internal/platform/database"
 	"github.com/dgrijalva/jwt-go"
@@ -84,6 +87,13 @@ func run() error {
 			ReporterURI   string  `conf:"default:http://zipkin:9411/api/v2/spans"`
 			ServiceName   string  `conf:"default:getlive-api"`
 			Probability   float64 `conf:"default:0.05"`
+		}
+		Twitter struct {
+			ConsumerKey    string
+			ConsumerSecret string
+			AccessToken    string
+			AccessSecret   string
+			Topics         string
 		}
 	}
 
@@ -220,6 +230,31 @@ func run() error {
 	}()
 
 	// =========================================================================
+	// Start Aggregator
+	aggregators := []aggregator.Aggregator{}
+
+	// Twitter aggregator
+	topics := strings.Split(cfg.Twitter.Topics, ",")
+	if twitter, err := twitter.New(
+		cfg.Twitter.ConsumerKey,
+		cfg.Twitter.ConsumerSecret,
+		cfg.Twitter.AccessToken,
+		cfg.Twitter.AccessSecret,
+		log,
+		topics...,
+	); err != nil {
+		log.Printf("main : Couldn't initialize Twitter aggregator: %v", err)
+	} else {
+		aggregators = append(aggregators, twitter)
+		log.Printf("main : Initialized Twitter aggregator for topics: %s", strings.Join(topics, ", "))
+	}
+
+	as := aggregator.New(log, aggregators...)
+
+	log.Printf("main : Running %d aggregators", len(as.Aggregators))
+	go as.Run()
+
+	// =========================================================================
 	// Shutdown
 
 	// Blocking main and waiting for shutdown.
@@ -233,6 +268,9 @@ func run() error {
 		// Give outstanding requests a deadline for completion.
 		ctx, cancel := context.WithTimeout(context.Background(), cfg.Web.ShutdownTimeout)
 		defer cancel()
+
+		// Ask the aggregator to shutdown.
+		as.Shutdown()
 
 		// Asking listener to shutdown and load shed.
 		err := api.Shutdown(ctx)

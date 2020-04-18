@@ -63,7 +63,7 @@ func Retrieve(ctx context.Context, db *sqlx.DB, id string) (*Entry, error) {
 }
 
 // Create inserts a new entry into the database.
-func Create(ctx context.Context, db *sqlx.DB, claims auth.Claims, n NewEntry, now time.Time) (*Entry, error) {
+func Create(ctx context.Context, db *sqlx.DB, n NewEntry, now time.Time) (*Entry, error) {
 	ctx, span := trace.StartSpan(ctx, "internal.entry.Create")
 	defer span.End()
 

@@ -58,10 +58,10 @@ func (p *Entry) Create(ctx context.Context, w http.ResponseWriter, r *http.Reque
 	ctx, span := trace.StartSpan(ctx, "handlers.Entry.Create")
 	defer span.End()
 
-	claims, ok := ctx.Value(auth.Key).(auth.Claims)
-	if !ok {
-		return web.NewShutdownError("claims missing from context")
-	}
+	// claims, ok := ctx.Value(auth.Key).(auth.Claims)
+	// if !ok {
+	// 	return web.NewShutdownError("claims missing from context")
+	// }
 
 	v, ok := ctx.Value(web.KeyValues).(*web.Values)
 	if !ok {
@@ -73,7 +73,7 @@ func (p *Entry) Create(ctx context.Context, w http.ResponseWriter, r *http.Reque
 		return errors.Wrap(err, "decoding new entry")
 	}
 
-	o, err := entry.Create(ctx, p.db, claims, n, v.Now)
+	o, err := entry.Create(ctx, p.db, n, v.Now)
 	if err != nil {
 		return errors.Wrapf(err, "creating new entry: %+v", n)
 	}
