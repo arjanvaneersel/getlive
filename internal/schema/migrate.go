@@ -52,6 +52,8 @@ CREATE TABLE entries (
 	title             TEXT,
 	description       TEXT,
 	url               TEXT,
+	categories        TEXT[],
+	keywords          TEXT[],
 	socialmedia_links TEXT[],
 	approved          BOOL,
 	approved_by       TEXT,

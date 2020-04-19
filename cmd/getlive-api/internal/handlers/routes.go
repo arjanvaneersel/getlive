@@ -53,7 +53,9 @@ func API(build string, shutdown chan os.Signal, log *log.Logger, db *sqlx.DB, au
 	}
 
 	app.Handle("GET", "/", w.List)
+	app.Handle("POST", "/", w.Login)
 	app.Handle("GET", "/entries/:id", w.Retrieve)
+	app.Handle("POST", "/entries/:id", w.Approve)
 
 	return app
 }

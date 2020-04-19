@@ -13,6 +13,8 @@ type Entry struct {
 	Title            string         `db:"title" json:"title"`
 	Description      string         `db:"description" json:"description"`
 	URL              string         `db:"url" json:"url"`
+	Categories       pq.StringArray `db:"categories" json:"categories"`
+	Keywords         pq.StringArray `db:"keywords" json:"keywords"`
 	SocialmediaLinks pq.StringArray `db:"socialmedia_links" json:"socialmedia_links"`
 	Approved         bool           `db:"approved" json:"approved"`
 	ApprovedBy       string         `db:"approved_by" json:"approved_by"`
@@ -27,6 +29,8 @@ type NewEntry struct {
 	Title            string    `json:"title" validate:"required"`
 	Description      string    `json:"description"`
 	URL              string    `json:"url" validate:"required"`
+	Categories       []string  `json:"categories"`
+	Keywords         []string  `json:"keywords"`
 	SocialmediaLinks []string  `json:"socialmedia_links"`
 
 	// These fields can only be set by admins.
@@ -48,6 +52,8 @@ type UpdateEntry struct {
 	Title            *string    `json:"title"`
 	Description      *string    `json:"description"`
 	URL              *string    `json:"url"`
+	Categories       []string   `json:"categories"`
+	Keywords         []string   `json:"keywords"`
 	SocialmediaLinks []string   `json:"socialmedia_links"`
 
 	// These fields can only be set by admins.

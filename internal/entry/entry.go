@@ -82,13 +82,14 @@ func Create(ctx context.Context, db *sqlx.DB, n NewEntry, now time.Time) (*Entry
 	}
 
 	const q = `INSERT INTO entries
-		(entry_id, date_time, title, description, url, socialmedia_links,
-		approved, approved_by, owner, date_created, date_updated)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`
+		(entry_id, date_time, title, description, url, categories, keywords, 
+		socialmedia_links, approved, approved_by, owner, date_created, 
+		date_updated)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`
 	_, err := db.ExecContext(
 		ctx, q,
-		r.ID, r.Time, r.Title,
-		r.Description, r.URL, r.SocialmediaLinks,
+		r.ID, r.Time, r.Title, r.Description,
+		r.URL, r.Categories, r.Keywords, r.SocialmediaLinks,
 		r.Approved, r.ApprovedBy, r.Owner,
 		r.DateCreated, r.DateUpdated,
 	)
@@ -121,8 +122,14 @@ func Update(ctx context.Context, db *sqlx.DB, claims auth.Claims, id string, upd
 	if upd.URL != nil {
 		r.URL = *upd.URL
 	}
+	if upd.Categories != nil {
+		r.Categories = upd.Categories
+	}
 	if upd.SocialmediaLinks != nil {
 		r.SocialmediaLinks = upd.SocialmediaLinks
+	}
+	if upd.Keywords != nil {
+		r.Keywords = upd.Keywords
 	}
 	if upd.Approved != nil {
 		r.Approved = *upd.Approved
@@ -141,15 +148,18 @@ func Update(ctx context.Context, db *sqlx.DB, claims auth.Claims, id string, upd
 		"title" = $3,
 		"description" = $4,
 		"url" = $5,
-		"socialmedia_links" = $6,
-		"approved" = $7,
-		"approved_by" = $8,
-		"owner" = $9,
-		"date_updated" = $10
+		"categories" = $6,
+		"keywords" = $7,
+		"socialmedia_links" = $8,
+		"approved" = $9,
+		"approved_by" = $10,
+		"owner" = $11,
+		"date_updated" = $12
 		WHERE entry_id = $1`
 	_, err = db.ExecContext(ctx, q, id,
 		r.Time, r.Title, r.Description,
-		r.URL, r.SocialmediaLinks, r.Approved,
+		r.URL, r.Categories, r.Keywords,
+		r.SocialmediaLinks, r.Approved,
 		r.ApprovedBy, r.Owner, r.DateUpdated,
 	)
 	if err != nil {
