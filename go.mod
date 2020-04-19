@@ -27,5 +27,6 @@ require (
 	github.com/pkg/errors v0.9.1
 	go.opencensus.io v0.22.3
 	golang.org/x/crypto v0.0.0-20200414173820-0848c9571904
+	google.golang.org/api v0.21.0
 	gopkg.in/go-playground/validator.v9 v9.31.0
 )

@@ -44,6 +44,8 @@ COPY --from=build_getlive-api /service/private.pem /app/private.pem
 COPY --from=build_getlive-api /service/cmd/${PACKAGE_PREFIX}getlive-admin/getlive-admin /app/admin
 COPY --from=build_getlive-api /service/cmd/${PACKAGE_PREFIX}${PACKAGE_NAME}/${PACKAGE_NAME} /app/main
 WORKDIR /app
+COPY credentials.json credentials.json
+COPY token.json token.json
 CMD /app/main
 
 LABEL org.opencontainers.image.created="${BUILD_DATE}" \

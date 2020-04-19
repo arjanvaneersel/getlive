@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/arjanvaneersel/getlive/internal/gcal"
 	"github.com/arjanvaneersel/getlive/internal/mid"
 	"github.com/arjanvaneersel/getlive/internal/platform/auth" // Import is removed in final PR
 	"github.com/arjanvaneersel/getlive/internal/platform/web"
@@ -48,14 +49,19 @@ func API(build string, shutdown chan os.Signal, log *log.Logger, db *sqlx.DB, au
 	app.Handle("PUT", "/v1/entries/:id", e.Update, mid.Authenticate(authenticator))
 	app.Handle("DELETE", "/v1/entries/:id", e.Delete, mid.Authenticate(authenticator))
 
+	cal, _ := gcal.New("credentials.json")
+
 	w := WebAdmin{
-		db: db,
+		db:  db,
+		cal: cal,
 	}
 
 	app.Handle("GET", "/", w.List)
 	app.Handle("POST", "/", w.Login)
 	app.Handle("GET", "/entries/:id", w.Retrieve)
 	app.Handle("POST", "/entries/:id", w.Approve)
+	app.Handle("GET", "/oac", w.OAuthCallback)
+	app.Handle("POST", "/oac", w.OAuthCallback)
 
 	return app
 }

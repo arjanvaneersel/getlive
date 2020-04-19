@@ -39,3 +39,4 @@ _testmain.go
 //*.test
 .vscode/tasks.json
 .env
+credentials.json

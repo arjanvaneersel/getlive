@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/arjanvaneersel/getlive/internal/entry"
+	"github.com/arjanvaneersel/getlive/internal/gcal"
 	"github.com/arjanvaneersel/getlive/internal/platform/auth"
 	"github.com/arjanvaneersel/getlive/internal/platform/web"
 	"github.com/arjanvaneersel/getlive/internal/user"
@@ -20,6 +21,7 @@ import (
 type WebAdmin struct {
 	db     *sqlx.DB
 	claims *auth.Claims
+	cal    *gcal.Calendar
 }
 
 // List returns all the existing users in the system.
@@ -116,7 +118,6 @@ func (wa *WebAdmin) Approve(ctx context.Context, w http.ResponseWriter, r *http.
 		ApprovedBy: &wa.claims.Subject,
 	}
 
-	fmt.Println(r.Form)
 	if len(r.Form.Get("categories")) > 0 {
 		//TODO: Check that categories are in Concerts & Festivals, MIND, BODY, SOUL, Covid19
 		categories := strings.Split(r.Form.Get("categories"), " ")
@@ -135,6 +136,48 @@ func (wa *WebAdmin) Approve(ctx context.Context, w http.ResponseWriter, r *http.
 			return errors.Wrapf(err, "updating entry %q: %+v", params["id"], up)
 		}
 	}
+
+	// Get all data for publishing to the calendar
+	// if the call service is initialized
+	if wa.cal != nil {
+		e, err := entry.Retrieve(ctx, wa.db, params["id"])
+		if err != nil {
+			switch err {
+			case entry.ErrInvalidID:
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return nil
+			case entry.ErrNotFound:
+				http.Error(w, err.Error(), http.StatusNotFound)
+				return nil
+			case entry.ErrForbidden:
+				http.Error(w, err.Error(), http.StatusForbidden)
+				return nil
+			default:
+				return errors.Wrapf(err, "Id: %s", params["id"])
+			}
+		}
+
+		title := e.Title
+		if len(e.Categories) > 0 {
+			title = fmt.Sprintf("[%s] %s", strings.ToUpper(e.Categories[0]), title)
+		}
+
+		// TODO: Store cal link in DB
+		// TODO: Better time handling
+		if _, err := wa.cal.Post(title, e.Description, e.URL, e.Time, e.Time.Add(1*time.Hour)); err != nil {
+			return errors.Wrap(err, "publishing to calendar")
+		}
+	}
+
 	http.Redirect(w, r, "/entries/"+params["id"], http.StatusFound)
 	return nil
+}
+
+func (wa *WebAdmin) OAuthCallback(ctx context.Context, w http.ResponseWriter, r *http.Request, params map[string]string) error {
+	ctx, span := trace.StartSpan(ctx, "handlers.WebAdmin.OAuthCallback")
+	defer span.End()
+
+	fmt.Fprintf(w, "Code: %s\n", r.FormValue("code"))
+
+	return web.Respond(ctx, w, nil, http.StatusOK)
 }

@@ -4,13 +4,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/ChimeraCoder/anaconda"
-	"github.com/arjanvaneersel/getlive/internal/entry"
 	"log"
 	"net/http"
 	gourl "net/url"
 	"strings"
 	"time"
+
+	"github.com/ChimeraCoder/anaconda"
+	"github.com/arjanvaneersel/getlive/internal/entry"
 )
 
 // type alog struct {
@@ -100,6 +101,15 @@ func (tw *Twitter) Aggregate(entryChan chan entry.NewEntry) error {
 				}
 			}
 			ne.Time = time.Now()
+
+			// Collect hashtags.
+			var hashtags []string
+			for _, tag := range v.Entities.Hashtags {
+				hashtags = append(hashtags, tag.Text)
+			}
+			ne.Keywords = hashtags
+
+			// Send entry to aggregator manager.
 			entryChan <- ne
 
 			// tw.logger.Printf("twitter : received tweet: %s... %s", v.Text[:100])

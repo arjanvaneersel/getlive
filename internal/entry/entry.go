@@ -73,6 +73,8 @@ func Create(ctx context.Context, db *sqlx.DB, n NewEntry, now time.Time) (*Entry
 		Title:            n.Title,
 		Description:      n.Description,
 		URL:              n.URL,
+		Categories:       n.Categories,
+		Keywords:         n.Keywords,
 		SocialmediaLinks: n.SocialmediaLinks,
 		Approved:         n.Approved,
 		ApprovedBy:       n.ApprovedBy,
