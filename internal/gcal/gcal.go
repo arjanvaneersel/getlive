@@ -117,7 +117,7 @@ func (c *Calendar) List() {
 	}
 }
 
-func (c *Calendar) Post(title, description, url string, start, end time.Time) (string, error) {
+func (c *Calendar) Post(title, description, url string, tags []string, start, end time.Time) (string, error) {
 	event := &calendar.Event{
 		Summary:     title,
 		Location:    url,
