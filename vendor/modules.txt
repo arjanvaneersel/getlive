@@ -46,8 +46,6 @@ github.com/go-playground/locales/en
 # github.com/go-playground/universal-translator v0.17.0
 ## explicit
 github.com/go-playground/universal-translator
-# github.com/gocolly/colly/v2 v2.0.1
-## explicit
 # github.com/golang/groupcache v0.0.0-20190702054246-869f871628b6
 github.com/golang/groupcache/lru
 # github.com/golang/protobuf v1.3.2
@@ -116,6 +114,7 @@ go.opencensus.io/trace/tracestate
 golang.org/x/crypto/bcrypt
 golang.org/x/crypto/blowfish
 # golang.org/x/net v0.0.0-20190724013045-ca1201d0de80
+## explicit
 golang.org/x/net/context
 golang.org/x/net/context/ctxhttp
 golang.org/x/net/html
@@ -127,6 +126,7 @@ golang.org/x/net/idna
 golang.org/x/net/internal/timeseries
 golang.org/x/net/trace
 # golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
+## explicit
 golang.org/x/oauth2
 golang.org/x/oauth2/google
 golang.org/x/oauth2/internal
@@ -156,6 +156,7 @@ google.golang.org/api/transport/cert
 google.golang.org/api/transport/http
 google.golang.org/api/transport/http/internal/propagation
 # google.golang.org/appengine v1.6.1
+## explicit
 google.golang.org/appengine
 google.golang.org/appengine/internal
 google.golang.org/appengine/internal/app_identity
@@ -205,6 +206,8 @@ google.golang.org/grpc/serviceconfig
 google.golang.org/grpc/stats
 google.golang.org/grpc/status
 google.golang.org/grpc/tap
+# gopkg.in/go-playground/assert.v1 v1.2.1
+## explicit
 # gopkg.in/go-playground/validator.v9 v9.31.0
 ## explicit
 gopkg.in/go-playground/validator.v9

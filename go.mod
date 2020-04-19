@@ -17,7 +17,6 @@ require (
 	github.com/garyburd/go-oauth v0.0.0-20180319155456-bca2e7f09a17 // indirect
 	github.com/go-playground/locales v0.13.0
 	github.com/go-playground/universal-translator v0.17.0
-	github.com/gocolly/colly/v2 v2.0.1 // indirect
 	github.com/google/go-cmp v0.4.0
 	github.com/google/uuid v1.1.1
 	github.com/jmoiron/sqlx v1.2.0
@@ -27,6 +26,10 @@ require (
 	github.com/pkg/errors v0.9.1
 	go.opencensus.io v0.22.3
 	golang.org/x/crypto v0.0.0-20200414173820-0848c9571904
+	golang.org/x/net v0.0.0-20190724013045-ca1201d0de80 // indirect
+	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
 	google.golang.org/api v0.21.0
+	google.golang.org/appengine v1.6.1 // indirect
+	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gopkg.in/go-playground/validator.v9 v9.31.0
 )
