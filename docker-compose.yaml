@@ -54,7 +54,8 @@ services:
       - API_TWITTER_CONSUMER_SECRET=${API_TWITTER_CONSUMER_SECRET}
       - API_TWITTER_ACCESS_TOKEN=${API_TWITTER_ACCESS_TOKEN}
       - API_TWITTER_ACCESS_SECRET=${API_TWITTER_ACCES_SECRET}
-      - API_TWITTER_TOPICS=#funny
+      - API_TWITTER_TOPICS=#TogetherAtHome;#StayHome;#QuarantineandChill;#ClubQuarantine;#VirtualFitness;#Quarantoned;#BigOnlinePar;#WatchParty;#LockDownNow;#StayHomeStaySafe;#Quarantined;#GetLiveTesting
+      - API_AGGREGATOR_YOUTUBE_API_KEY=${API_AGGREGATOR_YOUTUBE_API_KEY}
       # - GODEBUG=gctrace=1
     depends_on:
       - metrics

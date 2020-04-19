@@ -91,7 +91,7 @@ const entryTemplate = `
 		</tr>
 		<tr>
 			<th>Description</th>
-			<td>{{ .ID }}</td>
+			<td>{{ .Description }}</td>
 		</tr>
 		<tr>
 			<th>Owner</th>
@@ -99,7 +99,7 @@ const entryTemplate = `
 		</tr>
 		<tr>
 			<th>Approved</th>
-			<td>{{ .Approved }} <a href="/entries/{{ $e.ID }}" class="btn btn-success btn-sm">Approve</a></td>
+			<td>{{ .Approved }} <a href="/entries/{{ .ID }}" class="btn btn-success btn-sm">Approve</a></td>
 		</tr>
 		{{ if .Approved }}
 		<tr>

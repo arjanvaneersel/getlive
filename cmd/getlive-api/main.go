@@ -93,7 +93,11 @@ func run() error {
 			ConsumerSecret string
 			AccessToken    string
 			AccessSecret   string
-			Topics         string
+			Topics         []string
+		}
+		Aggregator struct {
+			AcceptedURLDomains []string `conf:"default:youtube.com;vimeo.com;twitch.tv"`
+			YoutubeAPIKey      string
 		}
 	}
 
@@ -234,22 +238,22 @@ func run() error {
 	aggregators := []aggregator.Aggregator{}
 
 	// Twitter aggregator
-	topics := strings.Split(cfg.Twitter.Topics, ",")
 	if twitter, err := twitter.New(
 		cfg.Twitter.ConsumerKey,
 		cfg.Twitter.ConsumerSecret,
 		cfg.Twitter.AccessToken,
 		cfg.Twitter.AccessSecret,
+		cfg.Aggregator.YoutubeAPIKey,
 		log,
-		topics...,
+		cfg.Twitter.Topics...,
 	); err != nil {
 		log.Printf("main : Couldn't initialize Twitter aggregator: %v", err)
 	} else {
 		aggregators = append(aggregators, twitter)
-		log.Printf("main : Initialized Twitter aggregator for topics: %s", strings.Join(topics, ", "))
+		log.Printf("main : Initialized Twitter aggregator for topics: %s", strings.Join(cfg.Twitter.Topics, ", "))
 	}
 
-	as := aggregator.New(log, aggregators...)
+	as := aggregator.New(db, log, cfg.Aggregator.AcceptedURLDomains, aggregators)
 
 	log.Printf("main : Running %d aggregators", len(as.Aggregators))
 	go as.Run()

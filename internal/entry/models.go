@@ -25,7 +25,7 @@ type Entry struct {
 type NewEntry struct {
 	Time             time.Time `json:"date_time" validate:"required"`
 	Title            string    `json:"title" validate:"required"`
-	Description      string    `json:"description" validate:"required"`
+	Description      string    `json:"description"`
 	URL              string    `json:"url" validate:"required"`
 	SocialmediaLinks []string  `json:"socialmedia_links"`
 
